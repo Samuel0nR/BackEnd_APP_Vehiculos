@@ -1,1 +1,1 @@
-web: dotnet API_Vehicles.dll
+web: ./bin/prebuild.sh && dotnet YourApp.dll
