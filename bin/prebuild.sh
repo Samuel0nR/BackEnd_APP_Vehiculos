@@ -18,4 +18,6 @@ if ! command -v dotnet &> /dev/null
 then
     echo ".NET no está instalado, instalando..."
     curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin
+    # Agregar el .dotnet al PATH y hacer visible el cambio
+    export PATH=$PATH:/app/.dotnet
 fi
