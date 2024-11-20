@@ -10,3 +10,12 @@ if [ -d "/app/.dotnet" ]; then
 else
   echo "El directorio .dotnet no existe"
 fi
+
+#!/bin/bash
+
+# Instalar .NET SDK (si no está disponible)
+if ! command -v dotnet &> /dev/null
+then
+    echo ".NET no está instalado, instalando..."
+    curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin
+fi
