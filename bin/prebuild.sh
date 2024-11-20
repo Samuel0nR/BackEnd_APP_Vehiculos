@@ -20,6 +20,4 @@ then
     curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin
     # Actualizar el PATH para que el comando dotnet sea accesible
     export PATH=$PATH:/app/.dotnet
-    # Source el cambio al PATH para que se aplique en el proceso actual
-    source /app/.dotnet
 fi

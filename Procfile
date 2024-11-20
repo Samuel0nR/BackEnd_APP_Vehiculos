@@ -1,1 +1,1 @@
-web: ./bin/prebuild.sh && "dotnet" YourApp.dll
+web: ./bin/prebuild.sh && dotnet YourApp.dll
