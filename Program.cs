@@ -20,7 +20,10 @@ builder.Services.AddCors(option =>
     );
 });
 
-//builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+if (!builder.Environment.IsProduction())
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}"); // Usar HTTP, no HTTPS
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
