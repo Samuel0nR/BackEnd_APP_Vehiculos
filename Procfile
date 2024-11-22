@@ -1,1 +1,0 @@
-web: ./bin/prebuild.sh && "dotnet" YourApp.dll

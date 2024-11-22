@@ -53,12 +53,12 @@ namespace api_dotNet_vehicles.Controllers
             return data == null ? NotFound() : Ok(data);
         }
 
-        [HttpGet("Models")]
-        public void GetModelsBranch(string Marca)
-        {
-            //var data = _dbContext.Vehiculos.
-            return;
-        }
+        //[HttpGet("Models")]
+        //public void GetModelsBranch(string Marca)
+        //{
+        //    //var data = _dbContext.Vehiculos.
+        //    return;
+        //}
 
     }
 }

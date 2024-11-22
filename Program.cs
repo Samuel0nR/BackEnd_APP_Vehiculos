@@ -7,23 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 Env.Load();
 var connStrng = Environment.GetEnvironmentVariable("CONNECTION_STR");
-var port = Environment.GetEnvironmentVariable("PORT") ?? "500";
+var port = Environment.GetEnvironmentVariable("PORT");
 
 builder.Services.AddDbContext<DBContext>(option => option.UseMySql(connStrng, ServerVersion.AutoDetect(connStrng)));
 
 builder.Services.AddCors(option =>
 {
     option.AddPolicy("AllowAngularApp", builder =>
-        builder.WithOrigins()
+        builder.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
     );
 });
-
-if (!builder.Environment.IsProduction())
-{
-    builder.WebHost.UseUrls($"http://0.0.0.0:{port}"); // Usar HTTP, no HTTPS
-}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +28,7 @@ var app = builder.Build();
 app.UseCors("AllowAngularApp");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
