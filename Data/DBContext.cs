@@ -13,7 +13,8 @@ namespace api_dotNet_vehicles.Data
 
         public virtual DbSet<CategoriaVModel> CategoriaVs { get; set; }
         public virtual DbSet<TipoVModel> TipoVs { get; set; }
-        public virtual DbSet<VehiculoModel> Vehiculos { get; set; }
+        public virtual DbSet<BikesDetModel> BikesDet { get; set; }
+        public virtual DbSet<CarsDetModel> CarsDet { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,11 +54,11 @@ namespace api_dotNet_vehicles.Data
                       .HasColumnName("tip_descripcion");
             });
 
-            modelBuilder.Entity<VehiculoModel>(entity =>
+            modelBuilder.Entity<BikesDetModel>(entity =>
             {
                 entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-                entity.ToTable("Vehiculo");
+                entity.ToTable("BIKES_DET");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
                 entity.Property(e => e.CodTipo)
@@ -73,6 +74,21 @@ namespace api_dotNet_vehicles.Data
                 entity.Property(e => e.Peso).HasMaxLength(50);
                 entity.Property(e => e.Suspension).HasMaxLength(50);
                 entity.Property(e => e.Valvula).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<CarsDetModel>(entity =>
+            {
+                entity.HasKey(e => e.Id).HasName("PRIMARY");
+                entity.ToTable("CARS_DET");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.CodVehi).HasColumnName("Cod_Vehi");
+                entity.Property(e => e.Marca);
+                entity.Property(e => e.Modelo);
+                entity.Property(e => e.CodTipo)
+                      .HasMaxLength(4)
+                      .HasColumnName("Cod_Tipo");
+
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -3,6 +3,7 @@ using api_dotNet_vehicles.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace api_dotNet_vehicles.Controllers
 {
@@ -19,19 +20,28 @@ namespace api_dotNet_vehicles.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VehiculoModel>>> GetVehicles(string Marca)
+        public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
-            var data = await _dbContext.Vehiculos
-                .Where(col => col.Marca == Marca)
-                .ToListAsync();
 
-            return data == null ? NotFound() : Ok(data);
-        }
+            switch (Categoria)
+            {
+                case 1:
+                        var cars = await _dbContext.CarsDet
+                        .Where(col => col.CodVehi == Categoria && col.Marca == Marca)
+                        .ToListAsync();
 
-        [HttpGet("Categories")]
-        public async Task<ActionResult<IEnumerable<CategoriaVModel>>> GetCategories()
-        {
-            return await _dbContext.CategoriaVs.ToListAsync();
+                    return Ok(cars);
+                        
+                case 3:
+                        var bikes = await _dbContext.BikesDet
+                        .Where(col => col.CodVehi == Categoria && col.Marca == Marca)
+                        .ToListAsync();
+                    return Ok(bikes); 
+
+                default:
+                    return NotFound();
+            }
+
         }
 
         [HttpGet("Types")]
@@ -56,9 +66,28 @@ namespace api_dotNet_vehicles.Controllers
         //[HttpGet("Models")]
         //public void GetModelsBranch(string Marca)
         //{
-        //    //var data = _dbContext.Vehiculos.
+        //    //var data = _dbContext.BikesDet.
         //    return;
         //}
 
+
+
+        [HttpPost("Cars")]
+        public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
+        {
+            _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
+            _ = await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        
+        [HttpPost("Bikes")]
+        public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
+        {
+            _ = await _dbContext.BikesDet.AddAsync(vehiculoModel);
+            _ = await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
