@@ -1,1 +1,1 @@
-web: cd API_VehiclesAPP/bin/publish/; ./API_VehiclesAPP --urls http://*:$PORT
+web: bin/publish/API_VehiclesAPP --urls http://*:$PORT

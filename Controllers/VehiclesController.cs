@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace api_dotNet_vehicles.Controllers
 {
     [ApiController]
-    [Route("/")]
+    [Route("api/vehicles")]
     [EnableCors("AllowAngularApp")]
     public class VehiclesController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace api_dotNet_vehicles.Controllers
             _dbContext = DbContext;
         }
 
-        [HttpGet("Category & Brand")]
+        [HttpGet("Category_and_Brand")]
         public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
             switch (Categoria)
@@ -111,6 +111,21 @@ namespace api_dotNet_vehicles.Controllers
             _ = await _dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+
+
+        [HttpGet("TestConnection")]
+        public async Task<ActionResult> TestConnection()
+        {
+            try
+            {
+                await _dbContext.Database.CanConnectAsync();
+                return Ok("Conexión exitosa a la base de datos.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al conectar a la base de datos: {ex.Message}");
+            }
         }
     }
 }
