@@ -15,8 +15,8 @@ builder.Services.AddCors(option =>
 {
     option.AddPolicy("AllowAngularApp", builder =>
         builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowAnyHeader()
     );
 });
 
@@ -33,17 +33,17 @@ builder.Services.ConfigureSwaggerGen(setup =>
 });
 
 var app = builder.Build();
-app.UseCors("AllowAngularApp");
+app.UseHttpsRedirection();
 
+app.UseCors("AllowAngularApp");
 app.UseSwagger();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwaggerUI();
 }
 
 app.UseAuthorization();
 app.MapControllers();
-app.UseHttpsRedirection();
 
 app.Run();
