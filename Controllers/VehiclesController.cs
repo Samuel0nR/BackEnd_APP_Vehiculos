@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace api_dotNet_vehicles.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/")]
     [EnableCors("AllowAngularApp")]
     public class VehiclesController : ControllerBase
     {
@@ -19,10 +19,9 @@ namespace api_dotNet_vehicles.Controllers
             _dbContext = DbContext;
         }
 
-        [HttpGet]
+        [HttpGet("Category & Brand")]
         public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
-
             switch (Categoria)
             {
                 case 1:
@@ -63,25 +62,49 @@ namespace api_dotNet_vehicles.Controllers
             return data == null ? NotFound() : Ok(data);
         }
 
-        //[HttpGet("Models")]
-        //public void GetModelsBranch(string Marca)
-        //{
-        //    //var data = _dbContext.BikesDet.
-        //    return;
-        //}
+
+        [HttpGet("Models")]
+        public async Task<ActionResult> GetModelsBranch(int Categoria, string Modelo)
+        {
+            switch (Categoria)
+            {
+                case 1:
+                    var cars = await _dbContext.CarsDet
+                    .Where(col => col.CodVehi == Categoria && EF.Functions.Like(col.Modelo, $"%{Modelo}%"))
+                    .ToListAsync();
+
+                    return Ok(cars);
+
+                case 3:
+                    var bikes = await _dbContext.BikesDet
+                    .Where(col => col.CodVehi == Categoria && EF.Functions.Like(col.Modelo, $"%{Modelo}%"))
+                    .ToListAsync();
+                    return Ok(bikes);
+
+                default:
+                    return NotFound();
+            }
+        }
 
 
 
-        [HttpPost("Cars")]
+        [HttpPost("New Car")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
         {
-            _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
-            _ = await _dbContext.SaveChangesAsync();
+            if (vehiculoModel == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
+                _ = await _dbContext.SaveChangesAsync();
 
-            return Ok();
+                return Ok();
+            }
         }
         
-        [HttpPost("Bikes")]
+        [HttpPost("New Bike")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
         {
             _ = await _dbContext.BikesDet.AddAsync(vehiculoModel);
