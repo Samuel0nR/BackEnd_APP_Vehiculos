@@ -19,7 +19,7 @@ namespace api_dotNet_vehicles.Controllers
             _dbContext = DbContext;
         }
 
-        [HttpGet("Category & Brand")]
+        [HttpGet("Category_and_Brand")]
         public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
             switch (Categoria)
