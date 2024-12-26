@@ -5,13 +5,14 @@ namespace api_dotNet_vehicles.Models;
 
 public partial class CarsDetModel
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public int CodVehi { get; set; }
     public string? Marca { get; set; }
     public string? Modelo { get; set; }
     public string? CodTipo { get; set; }
     public string? Transmision { get; set; }
     public string? Motor { get; set; }
+    public string? Combustible { get; set; }
     public string? Frenos_Del { get; set; }
     public string? Frenos_Tras { get; set; }
     public string? Neumatico { get; set; }

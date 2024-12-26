@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace api_dotNet_vehicles.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/")]
     [EnableCors("AllowAngularApp")]
     public class VehiclesController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace api_dotNet_vehicles.Controllers
             _dbContext = DbContext;
         }
 
-        [HttpGet]
+        [HttpGet("Category & Brand")]
         public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
             switch (Categoria)
@@ -88,16 +88,23 @@ namespace api_dotNet_vehicles.Controllers
 
 
 
-        [HttpPost("Cars")]
+        [HttpPost("New Car")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
         {
-            _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
-            _ = await _dbContext.SaveChangesAsync();
+            if (vehiculoModel == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
+                _ = await _dbContext.SaveChangesAsync();
 
-            return Ok();
+                return Ok();
+            }
         }
         
-        [HttpPost("Bikes")]
+        [HttpPost("New Bike")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
         {
             _ = await _dbContext.BikesDet.AddAsync(vehiculoModel);
