@@ -22,18 +22,23 @@ builder.Services.AddCors(option =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddRazorPages();
+
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureSwaggerGen(setup =>
 {
     setup.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "VehiclesAPI",
+        Title = "Vehicles API",
         Version = "v1"
     });
 });
 
 var app = builder.Build();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 
 app.UseCors("AllowAngularApp");
 app.UseSwagger();
@@ -45,5 +50,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapRazorPages();
+app.MapGet("/", () => Results.Redirect("/Index"));
 
 app.Run();
