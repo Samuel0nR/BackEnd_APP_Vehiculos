@@ -88,7 +88,7 @@ namespace api_dotNet_vehicles.Controllers
 
 
 
-        [HttpPost("New Car")]
+        [HttpPost("New_Car")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
         {
             if (vehiculoModel == null)
@@ -104,7 +104,7 @@ namespace api_dotNet_vehicles.Controllers
             }
         }
         
-        [HttpPost("New Bike")]
+        [HttpPost("New_Bike")]
         public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
         {
             _ = await _dbContext.BikesDet.AddAsync(vehiculoModel);
