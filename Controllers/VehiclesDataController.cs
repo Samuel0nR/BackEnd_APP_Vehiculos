@@ -23,23 +23,31 @@ namespace api_dotNet_vehicles.Controllers
         [HttpGet("Brand")]
         public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
         {
-            switch (Categoria)
+            try
             {
-                case 1:
-                    var cars = await _dbContext.CarsDet
-                    .Where(col => col.Marca == Marca)
-                    .ToListAsync();
+                switch (Categoria)
+                {
+                    case 1:
+                        var cars = await _dbContext.CarsDet
+                        .Where(col => col.Marca == Marca)
+                        .ToListAsync();
 
-                    return Ok(cars);
+                        return Ok(cars);
 
-                case 3:
-                    var bikes = await _dbContext.BikesDet
-                    .Where(col => col.Marca == Marca)
-                    .ToListAsync();
-                    return Ok(bikes);
+                    case 3:
+                        var bikes = await _dbContext.BikesDet
+                        .Where(col => col.Marca == Marca)
+                        .ToListAsync();
+                        return Ok(bikes);
 
-                default:
-                    return NotFound();
+                    default:
+                        return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+                throw;
             }
 
         }

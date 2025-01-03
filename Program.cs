@@ -4,7 +4,6 @@ using api_dotNet_vehicles.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 Env.Load();
 var connStrng = Environment.GetEnvironmentVariable("CONNECTION_STR");
 var port = Environment.GetEnvironmentVariable("PORT");

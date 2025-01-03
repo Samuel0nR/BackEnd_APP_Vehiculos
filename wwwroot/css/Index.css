@@ -1,6 +1,8 @@
 ﻿body {
     height: 100vh;
-    background-image: linear-gradient( 111.1deg, rgba(0,40,70,1) -4.8%, rgba(255,115,115,1) 82.7%, rgba(255,175,123,1) 97.2% );
+    /*background-image: linear-gradient( 111.1deg, rgba(0,40,70,1) -4.8%, rgba(255,115,115,1) 82.7%, rgba(255,175,123,1) 97.2% );*/
+    /*background-image: linear-gradient( 358.7deg, rgba(42,136,157,1) 1.7%, rgba(122,197,214,1) 51.1%, rgba(211,232,242,1) 95.5% );*/
+    background-image: linear-gradient( 109.6deg,  rgba(9,9,121,1) 11.2%, rgba(144,6,161,1) 53.7%, rgba(0,212,255,1) 100.2% );
 }
 
 /*
@@ -21,6 +23,10 @@
     -> background-image: linear-gradient( 65.9deg,  rgba(85,228,224,1) 5.5%, rgba(75,68,224,0.74) 54.2%, rgba(64,198,238,1) 55.2%, rgba(177,36,224,1) 98.4% 
 */
 
+nav {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(50px);
+}
 
 .card {
     border-radius: 25px;
@@ -29,6 +35,24 @@
     border: 2px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-
     color: #FFFFFF;
+}
+
+#v-pills-tab a{
+    color: #FFFFFF !important;
+}
+#v-pills-tab a:is(.active) {
+    background-color: blueviolet !important;
+    border: 1px solid #FFFFFF;
+}
+#v-pills-tab {
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#tabHome, #tabDoc {
+    text-align: left;
+}
+
+dl{
+    margin: 20px;
 }

@@ -2,7 +2,7 @@
 @model API_VehiclesAPP.Pages.IndexModel
 
 @{
-    var Title = "Bienvenido a la API de Vehículos";
+    var yearNow = DateTime.Now.ToString("yyyy");
 }
 
 <!DOCTYPE html>
@@ -11,6 +11,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Vehicles API - DOC</title>
+        
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Estilos personalizados -->
@@ -18,41 +19,86 @@
 
     </head>
     <body class="h-100 d-flex flex-column align-items-center">
+        @* Navbar *@
         <section class="w-100">
-            <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
+            <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
                 <div class="container-fluid">
                     <a class="navbar-brand">VehiclesAPP - API Doc</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="collapse navbar-collapse" id="navbar">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="Index">Home</a>
+                                <a class="nav-link active" aria-current="page" href="Index">Principal</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Docs</a>
+                                <a class="nav-link" href="#">Nosotros</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="swagger">Swagger</a>
                             </li>
                         </ul>
-                        <form class="d-flex" role="search">
+                        @* <form class="d-flex" role="search" data-bs-theme="light">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-light" type="submit">Search</button>
-                        </form>
+                        </form> *@
                     </div>
                 </div>
             </nav>
         </section>
-    
-        <section class="container m-5 text-center">
+        
+        @* Body *@
+        <section class="container-fluid my-4 p-4 text-center">
             <article class="card p-4">
-                <h1 class="mb-3">@Title</h1>
+                <h1 class="mb-3">Bienvenido a la API de Vehículos</h1>
                 <p>Haz clic en el botón de abajo para acceder a la interfaz Swagger de la API.</p>
                 
                 <div class="text-center">
-                    <button class="btn btn-primary w-25" id="swaggerBtn" >Ir a Swagger</button>
+                    <button class="btn btn-light w-25" id="swaggerBtn">Ir a Swagger</button>
+                </div>
+                <br /><hr />
+
+                <div class="d-flex">
+                    @* Menú Tabs *@
+                    <div class="nav flex-column nav-pills col-2 px-4 py-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <a class="nav-link active" id="menu-homeTab" data-bs-toggle="pill" data-bs-target="#tabHome" type="button" role="tab" aria-controls="tabHome" aria-selected="true">Inicio</a>
+                        
+                        <a class="nav-link" id="menu-docTab" data-bs-toggle="pill" data-bs-target="#tabDoc" type="button" role="tab" aria-controls="tabDoc" aria-selected="false">Documentación</a>
+                        <div class="collapse" id="dropdownMenu">
+                            <div class="nav nav-underline flex-column ms-3">
+                                <a class="nav-link" id="menu-option1Tab" data-bs-target="#tabOption1" type="button" role="tab" aria-controls="tabOption1">API Endpoints</a>
+                                @* <a class="nav-link" id="menu-option2Tab" data-bs-target="#tabOption2" type="button" role="tab" aria-controls="tabOption2">API </a>
+                                   <a class="nav-link" id="menu-option3Tab" data-bs-target="#tabOption3" type="button" role="tab" aria-controls="tabOption3">API</a> *@
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @* Tabs *@
+                    <div class="tab-content col-10 px-4 py-3" id="v-pills-tabContent">
+                        @* Inicio *@
+                        <div class="tab-pane fade show active px-3" id="tabHome" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
+                            <h3>Comienzo</h3>
+
+                            <dl>
+                                <dt>Objetivo:</dt>
+                                <dd>La idea y necesidad con la que se creó esta API, fue para concentrar las busquedas de cualquier tipo de información relacionada con Vehiculos,
+                                    ya sea desde Autos hasta Scooters en un solo lugar.
+                                </dd>
+                            </dl>
+                        </div>
+
+                        @* Doc *@
+                        <div class="tab-pane fade px-3" id="tabDoc" role="tabpanel" aria-labelledby="v-pills-disabled-tab" tabindex="0">
+                            <h3>Documentación</h3>
+
+                            <dl>
+                                <dt>Uso y Configuración:</dt>
+                                <dd>Aqui aprenderás a Utilizar la API de Vehiculos y así poder acceder a toda su información disponible.</dd>
+                            </dl>
+                        </div>
+                    </div>
                 </div>
             </article>
         </section>
