@@ -38,15 +38,19 @@ nav {
     color: #FFFFFF;
 }
 
+#v-pills-tab {
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
 #v-pills-tab a{
     color: #FFFFFF !important;
+    margin: 5px 0;
 }
+#v-pills-tab a:is(:hover){
+    background: rgba(255, 255, 255, 0.5); /* Fondo semitransparente */
+    backdrop-filter: blur(5px); /* Efecto blur en el fondo */}
 #v-pills-tab a:is(.active) {
     background-color: blueviolet !important;
     border: 1px solid #FFFFFF;
-}
-#v-pills-tab {
-    border-right: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 #tabHome, #tabDoc {

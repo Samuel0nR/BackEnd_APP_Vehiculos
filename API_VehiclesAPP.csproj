@@ -8,7 +8,6 @@
     <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0</ContainerBaseImage>
     <UserSecretsId>0495bbc1-59f1-4836-b5fd-2c90ebfe1fd7</UserSecretsId>
-    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
