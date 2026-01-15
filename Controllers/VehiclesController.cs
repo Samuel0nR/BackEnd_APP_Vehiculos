@@ -1,131 +1,68 @@
-﻿using api_dotNet_vehicles.Data;
-using api_dotNet_vehicles.Models;
+﻿using api_dotNet_vehicles.Models;
+using API_VehiclesAPP.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
-namespace api_dotNet_vehicles.Controllers
+namespace API_VehiclesAPP.Controllers
 {
     [ApiController]
-    [Route("api/vehicles")]
+    [Route("api/Vehicles")]
     [EnableCors("AllowAngularApp")]
     public class VehiclesController : ControllerBase
     {
-        private readonly DBContext _dbContext;
 
-        public VehiclesController(DBContext DbContext)
-        {
-            _dbContext = DbContext;
-        }
-
-        [HttpGet("Category_and_Brand")]
-        public async Task<ActionResult> GetVehicles(int Categoria, string Marca)
-        {
-            switch (Categoria)
-            {
-                case 1:
-                        var cars = await _dbContext.CarsDet
-                        .Where(col => col.CodVehi == Categoria && col.Marca == Marca)
-                        .ToListAsync();
-
-                    return Ok(cars);
-                        
-                case 3:
-                        var bikes = await _dbContext.BikesDet
-                        .Where(col => col.CodVehi == Categoria && col.Marca == Marca)
-                        .ToListAsync();
-                    return Ok(bikes); 
-
-                default:
-                    return NotFound();
-            }
-
-        }
-
+        
         [HttpGet("Types")]
-        public async Task<ActionResult<IEnumerable<TipoVModel>>> GetTypes(int Categoria)
+        public async Task<IActionResult> GetTypes(int Categoria)
         {
-            if (Categoria <= 0)
-            {
-                return BadRequest("El parámetro 'Categoria' es requerido y debe ser mayor que 0.");
-            }
-
-            var data = await _dbContext.TipoVs
-                .Where(col => col.CatV == Categoria)
-                .Select(col => new TipoVModel
-                {
-                    Tipo = col.Tipo,
-                })
-                .ToListAsync();
+            var data = "";
 
             return data == null ? NotFound() : Ok(data);
         }
 
 
-        [HttpGet("Models")]
-        public async Task<ActionResult> GetModelsBranch(int Categoria, string Modelo)
-        {
-            switch (Categoria)
-            {
-                case 1:
-                    var cars = await _dbContext.CarsDet
-                    .Where(col => col.CodVehi == Categoria && EF.Functions.Like(col.Modelo, $"%{Modelo}%"))
-                    .ToListAsync();
-
-                    return Ok(cars);
-
-                case 3:
-                    var bikes = await _dbContext.BikesDet
-                    .Where(col => col.CodVehi == Categoria && EF.Functions.Like(col.Modelo, $"%{Modelo}%"))
-                    .ToListAsync();
-                    return Ok(bikes);
-
-                default:
-                    return NotFound();
-            }
-        }
-
-
-
-        [HttpPost("New Car")]
-        public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
+        /*------ Insertar Nuevos Vehiculos ------*/
+        [HttpPost("New_Car")]
+        public async Task<ActionResult<IEnumerable<CarsDetModel>>> PostNewCar(CarsDetModel vehiculoModel)
         {
             if (vehiculoModel == null)
             {
-                return BadRequest();
+                return BadRequest(new { message = "El objeto CarsDetModel no puede ser nulo." });
             }
-            else
-            {
-                _ = await _dbContext.CarsDet.AddAsync(vehiculoModel);
-                _ = await _dbContext.SaveChangesAsync();
 
-                return Ok();
-            }
-        }
-        
-        [HttpPost("New Bike")]
-        public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
-        {
-            _ = await _dbContext.BikesDet.AddAsync(vehiculoModel);
-            _ = await _dbContext.SaveChangesAsync();
-
-            return Ok();
-        }
-
-
-        [HttpGet("TestConnection")]
-        public async Task<ActionResult> TestConnection()
-        {
             try
             {
-                await _dbContext.Database.CanConnectAsync();
-                return Ok("Conexión exitosa a la base de datos.");
+                var resp = "";
+                return Ok();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error al conectar a la base de datos: {ex.Message}");
+                return StatusCode(500, new { message = "Ocurrió un error al agregar el vehículo.", error = ex.Message });
             }
         }
+
+        [HttpPost("New_Bike")]
+        public async Task<ActionResult<IEnumerable<BikesDetModel>>> PostNewBike(BikesDetModel vehiculoModel)
+        {
+            if (vehiculoModel == null)
+            {
+                return BadRequest(new { message = "El objeto BikesDetModel no puede ser nulo." });
+            }
+
+            try
+            {
+                var resp = "";
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocurrió un error al agregar el vehículo.", error = ex.Message });
+            }
+        }
+
+
     }
 }
