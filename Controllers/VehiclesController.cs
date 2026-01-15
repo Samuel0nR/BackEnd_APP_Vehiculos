@@ -1,40 +1,23 @@
-﻿using api_dotNet_vehicles.Data;
-using api_dotNet_vehicles.Models;
+﻿using api_dotNet_vehicles.Models;
+using API_VehiclesAPP.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
-namespace api_dotNet_vehicles.Controllers
+namespace API_VehiclesAPP.Controllers
 {
     [ApiController]
     [Route("api/Vehicles")]
     [EnableCors("AllowAngularApp")]
     public class VehiclesController : ControllerBase
     {
-        private readonly DBContext _dbContext;
 
-        public VehiclesController(DBContext DbContext)
-        {
-            _dbContext = DbContext;
-        }
-
-        /*------ Info Categorías - Filtros - etc ------*/
+        
         [HttpGet("Types")]
-        public async Task<ActionResult<IEnumerable<TipoVModel>>> GetTypes(int Categoria)
+        public async Task<IActionResult> GetTypes(int Categoria)
         {
-            if (Categoria <= 0)
-            {
-                return BadRequest("El parámetro 'Categoria' es requerido y debe ser mayor que 0.");
-            }
-
-            var data = await _dbContext.TipoVs
-                .Where(col => col.CatV == Categoria)
-                //.Select(col => new TipoVModel
-                //{
-                //    Tipo = col.Tipo,
-                //})
-                .ToListAsync();
+            var data = "";
 
             return data == null ? NotFound() : Ok(data);
         }
@@ -51,19 +34,8 @@ namespace api_dotNet_vehicles.Controllers
 
             try
             {
-                var existingVehicle = await _dbContext.CarsDet
-                    .FirstOrDefaultAsync(v =>
-                        v.Modelo == vehiculoModel.Modelo);
-
-                if (existingVehicle != null)
-                {
-                    return Conflict(new { message = "Ya existe un vehículo con las mismas características en la base de datos." });
-                }
-
-                await _dbContext.CarsDet.AddAsync(vehiculoModel);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(new { message = "Vehículo agregado exitosamente." });
+                var resp = "";
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -81,19 +53,9 @@ namespace api_dotNet_vehicles.Controllers
 
             try
             {
-                var existingVehicle = await _dbContext.BikesDet
-                    .FirstOrDefaultAsync(v =>
-                        v.Modelo == vehiculoModel.Modelo);
+                var resp = "";
 
-                if (existingVehicle != null)
-                {
-                    return Conflict(new { message = "Ya existe un vehículo con las mismas características en la base de datos." });
-                }
-
-                await _dbContext.BikesDet.AddAsync(vehiculoModel);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(new { message = "Vehículo agregado exitosamente." });
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -102,19 +64,5 @@ namespace api_dotNet_vehicles.Controllers
         }
 
 
-        /*------ BD ------*/
-        //[HttpGet("TestConnection")]
-        //public async Task<ActionResult> TestConnection()
-        //{
-        //    try
-        //    {
-        //        await _dbContext.Database.CanConnectAsync();
-        //        return Ok("Conexión exitosa a la base de datos.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Error al conectar a la base de datos: {ex.Message}");
-        //    }
-        //}
     }
 }
