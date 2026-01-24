@@ -5,6 +5,7 @@ using API_VehiclesAPP.Services;
 using API_VehiclesAPP.Services.Interfaces;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.IdentityModel.Tokens;
@@ -45,7 +46,7 @@ builder.Services.ConfigureSwaggerGen(setup =>
 {
     setup.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "My Mobi App",
+        Title = "My Mobi API",
         Version = "v1"
     });
 });
@@ -87,10 +88,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseForwardedHeaders();
 
 app.UseCors("AllowAngularApp");
 app.UseSwagger();
