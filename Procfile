@@ -1,1 +1,0 @@
-web: bin/publish/API_VehiclesAPP --urls http://*:$PORT

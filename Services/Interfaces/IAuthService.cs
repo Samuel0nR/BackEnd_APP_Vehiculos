@@ -1,0 +1,14 @@
+﻿using API_VehiclesAPP.DTOs;
+using API_VehiclesAPP.DTOs.Auth;
+using API_VehiclesAPP.Entities;
+
+namespace API_VehiclesAPP.Services.Interfaces
+{
+    public interface IAuthService
+    {
+        Task<LoginResponseDTO> Register(RegisterRequestDTO registerRequest);
+        Task<LoginResponseDTO> CompleteDataUser(Guid UId, ClientDTO client);
+
+        Task<LoginResponseDTO?> Login(LoginRequestDTO loginRequest);
+    }
+}
