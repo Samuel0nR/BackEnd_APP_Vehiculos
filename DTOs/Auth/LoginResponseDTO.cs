@@ -2,7 +2,7 @@
 
 namespace API_VehiclesAPP.DTOs.Auth
 {
-    public class LoginResponseDTO
+    public class LoginResponseDTO : ResponseDTO
     {
         public required User User { get; set; }
         public string? Token { get; set; }

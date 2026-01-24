@@ -1,4 +1,5 @@
 ﻿using API_VehiclesAPP.Data;
+using API_VehiclesAPP.DTOs;
 using API_VehiclesAPP.DTOs.Auth;
 using API_VehiclesAPP.Entities;
 using API_VehiclesAPP.Services.Interfaces;
@@ -15,22 +16,24 @@ namespace API_VehiclesAPP.Services
         private readonly IJwtService _jwtService = jwtService;
 
 
-        public async Task<RegisterResponseDTO> Register(RegisterRequestDTO registerRequest)
+        public async Task<LoginResponseDTO> Register(RegisterRequestDTO registerRequest)
         {
             RegisterResponseDTO responseDTO = new();
+            LoginResponseDTO loginResponseDTO = null!;
+
             try
             {
                 if (string.IsNullOrWhiteSpace(registerRequest.Email))
-                    throw new Exception("Email requerido");
+                    throw new Exception("Email Requerido");
 
                 if (string.IsNullOrWhiteSpace(registerRequest.Password))
-                    throw new Exception("Password requerido");
+                    throw new Exception("Password Requerido");
 
                 bool emailExists = await _dBContext.Users
                     .AnyAsync(u => u.Email == registerRequest.Email);
 
                 if (emailExists)
-                    throw new Exception("Email ya registrado");
+                    throw new ArgumentException("Email Registrado, Intente con Otro.");
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
 
@@ -40,17 +43,20 @@ namespace API_VehiclesAPP.Services
                     PasswordHash = passwordHash,
                     Role = "User",
                     IsActive = true, // Dsps Agregar Validador mediante Correo
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                 };
 
                 _dBContext.Users.Add(user);
-                await _dBContext.SaveChangesAsync();
-            
-                responseDTO = new RegisterResponseDTO
+                await _dBContext.SaveChangesAsync();            
+
+                loginResponseDTO = new()
                 {
-                    UserId = user.UserId,
-                    Email = user.Email,
+                    User = user,
+                    IsAuth = false,
+                    Token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role, "false"),
                 };
+
+
             }
             catch (Exception ex)
             {
@@ -58,55 +64,61 @@ namespace API_VehiclesAPP.Services
                 throw;
             }
 
-            return responseDTO;
+            return loginResponseDTO;
         }
-        
-        public async Task<LoginResponseDTO> CompleteDataUser(Cliente client)
+        public async Task<LoginResponseDTO> CompleteDataUser(Guid userId, ClientDTO client)
         {
-            LoginResponseDTO loginResponse = new()
-            {
-                User = new()
-            };
-
             try
             {
-                // Validaciones
-                var user = _dBContext.Users.Where(i => i.UserId == client.UserId).ToList();
-                if (user.Count == 0 || user[0].UserId.ToString() != client.UserId.ToString() )
-                    throw new Exception("ID de Usuario Inválido");
+                var user = await _dBContext.Users
+                    .FirstOrDefaultAsync(u => u.UserId == userId);
 
-                bool clientExist = await _dBContext.Clientes.AnyAsync(i => i.UserId == client.UserId);
+                if (user == null)
+                    throw new Exception("Usuario no encontrado.");
+
+                bool clientExist = await _dBContext.Clientes
+                    .AnyAsync(c => c.UserId == userId);
+
                 if (clientExist)
-                    throw new Exception("ID de Usuario Ya Existente");
+                    throw new Exception("El usuario ya completó sus datos.");
 
+                client.Rut = client.Rut.Replace(".", "").ToUpper();
+                var newClient = new Cliente
+                {
+                    ClienteId = Guid.NewGuid(),
+                    UserId = userId,
+                    Nombre = client.Nombre,
+                    Rut = client.Rut,
+                    Telefono = client.Telefono,
+                    Direccion = client.Direccion
+                };
 
-                // Insert
-                client.ClienteId = Guid.NewGuid();
-                _ = _dBContext.Clientes.Add(client);
+                _dBContext.Clientes.Add(newClient);
                 await _dBContext.SaveChangesAsync();
 
-                // Construccion de Response: Generar Token + DTO
-                loginResponse.Token = _jwtService.GenerateToken(client.UserId.ToString(), user[0].Email, user[0].Role);
-
-                loginResponse.IsAuth = true;
-                loginResponse.User = user[0];
-
+                return new LoginResponseDTO
+                {
+                    User = user,
+                    Token = _jwtService.GenerateToken(
+                        userId.ToString(),
+                        user.Email,
+                        user.Role,
+                        "true"
+                    ),
+                    IsAuth = true
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error al Completar Datos de Usuario | {ex.Message}");
+                _logger.LogError(ex, "Error al completar datos del usuario");
                 throw;
             }
-
-            return loginResponse;
-
         }
-        
 
 
-        public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequest)
+        public async Task<LoginResponseDTO?> Login(LoginRequestDTO loginRequest)
         {
-            LoginResponseDTO loginResponse = new()
+            LoginResponseDTO? loginResponse = new()
             {
                 User = new()
             };
@@ -114,31 +126,49 @@ namespace API_VehiclesAPP.Services
             try
             {
                 // Validar que Reuqest no venga Null
-                if (loginRequest == null) return loginResponse;
+                if (loginRequest == null)
+                    return loginResponse;
 
                 // Buscar en DB Usuario
-                var user = _dBContext.Users.FirstOrDefault(i => i.Email == loginRequest.Email);
-                if (user == null) return loginResponse;
+                var user = await _dBContext.Users.FirstOrDefaultAsync(i => i.Email == loginRequest.Email);
+                if (user == null)
+                    return loginResponse;
 
                 // Validar Contraseña Ingresada
                 bool isValid = BCrypt.Net.BCrypt.Verify(loginRequest.Password, user!.PasswordHash);
 
 
-                //Crear JWT
-                var token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role);
+                return isValid ?
+                loginResponse = new LoginResponseDTO()
+                {
+                    User = new User()
+                    {
+                        Email = user.Email,
+                        Username = user.Username,
+                        Role = user.Role,
+                        UserId = user.UserId,
+                    },
+                    Token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role, "true"),
+                    IsAuth = isValid,
+                    Code = "200",
+                    Message = "OK",
+                } 
+                : 
+                loginResponse = new LoginResponseDTO()
+                {
+                    User = new User(),
+                    Token = null,
+                    IsAuth = false,
+                    Code = "400",
+                    Message = "Contraseña Incorrecta.",
+                };
 
-                loginResponse.User = user;
-                loginResponse.Token = token;
-                loginResponse.IsAuth = isValid;
-                                
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error al Iniciar Sesion {loginRequest} | {ex.Message}");
                 throw;
             }
-
-            return loginResponse;
         }
 
 

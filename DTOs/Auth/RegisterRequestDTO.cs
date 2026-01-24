@@ -8,6 +8,7 @@ namespace API_VehiclesAPP.DTOs.Auth
         public required string Email { get; set; }
 
         [Required]
+        [MinLength(6)]
         public required string Password { get; set; }
 
     }

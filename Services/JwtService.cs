@@ -14,16 +14,17 @@ namespace API_VehiclesAPP.Services
         private readonly JwtConfig _options;
         public JwtService(IOptions<JwtConfig> options) => _options = options.Value;
 
-        public string GenerateToken(string ID, string Email = "", string Role = "User")
+        public string GenerateToken(string ID, string Email = "", string Role = "User", string Auth = "false")
         {
-            JwtSecurityToken token = new();
+            JwtSecurityToken token = null!;
             try
             {
                 Claim[] claims =
                 [
-                    new Claim(ClaimTypes.NameIdentifier, ID), //
+                    new Claim(ClaimTypes.NameIdentifier, ID),
                     new Claim(ClaimTypes.Email, Email),
                     new Claim(ClaimTypes.Role, Role),
+                    new Claim("Auth", Auth),
                 ];
 
                 SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_options.Key));

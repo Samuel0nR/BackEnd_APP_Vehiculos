@@ -1,6 +1,9 @@
-﻿using API_VehiclesAPP.DTOs.Auth;
+﻿using System.Security.Claims;
+using API_VehiclesAPP.DTOs;
+using API_VehiclesAPP.DTOs.Auth;
 using API_VehiclesAPP.Entities;
 using API_VehiclesAPP.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_VehiclesAPP.Controllers
@@ -14,22 +17,24 @@ namespace API_VehiclesAPP.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequestDTO registerRequest)
         {
-            if (string.IsNullOrEmpty(registerRequest.Email)) return BadRequest();
+            if (string.IsNullOrEmpty(registerRequest.Email)) 
+                return BadRequest();
 
             var resp = await _authService.Register(registerRequest);
 
             return Created("", resp);
         }
 
+        [Authorize]
         [HttpPost("register/complete")]
-        public async Task<IActionResult> CompleteRegister([FromBody]RegisterResponseDTO registerResponse)
+        public async Task<IActionResult> CompleteRegister([FromBody]ClientDTO client)
         {
-            if(registerResponse.UserId == Guid.Empty || registerResponse.Cliente == null)
+            if(string.IsNullOrEmpty(client.Nombre) || string.IsNullOrEmpty(client.Rut))
                 return BadRequest();
 
-
-            registerResponse.Cliente!.UserId = registerResponse.UserId;
-            var resp = await _authService.CompleteDataUser( registerResponse.Cliente );
+            Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            
+            var resp = await _authService.CompleteDataUser( userId, client );
 
             return Ok(resp);
         }
@@ -40,13 +45,11 @@ namespace API_VehiclesAPP.Controllers
         public async Task<IActionResult> Login(LoginRequestDTO loginRequestDTO)
         {
             if (loginRequestDTO.Email == null || loginRequestDTO.Password == null) 
-            {
-                return BadRequest();
-            }
+                return BadRequest();            
 
-            _ = await _authService.Login(loginRequestDTO);
+            var result = await _authService.Login(loginRequestDTO);
 
-            return Ok();
+            return Ok(result);
         }
 
 
