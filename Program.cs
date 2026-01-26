@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.IdentityModel.Tokens;
+using Resend;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 var connStrng = Environment.GetEnvironmentVariable("CONNECTION_STR");
 var port = Environment.GetEnvironmentVariable("PORT");
+var resend = Environment.GetEnvironmentVariable("RESEND_KEY");
 
 //builder.Services.AddDbContext<DBContext>(option => option.UseMySql(connStrng, ServerVersion.AutoDetect(connStrng))); //MySQL
 builder.Services.AddDbContext<DBContext>(option => option.UseSqlServer(connStrng)); //SQLServer
@@ -35,6 +37,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IVehiclesService, VehiclesService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 //Razor
@@ -88,11 +91,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-
+//HTTPS
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
+
+//RESEND
+builder.Services.AddOptions();
+builder.Services.AddHttpClient<ResendClient>();
+builder.Services.Configure<ResendClientOptions>(options =>
+{
+    options.ApiToken = resend!;
+});
+builder.Services.AddTransient<IResend, ResendClient>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

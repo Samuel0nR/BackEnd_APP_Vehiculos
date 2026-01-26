@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación My Mobi</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f7; width: 100vw; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
+                    <tr>
+                        <td align="center" style="padding: 30px 0; background-color: #0056b3;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">My Mobi</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center" style="color: #333333; font-size: 20px; font-weight: bold; padding-bottom: 20px;">
+                                        {{Subject}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="color: #555555; font-size: 16px; line-height: 1.6; padding-bottom: 30px;">
+                                        Hola <strong>{{UserName}}</strong>,<br>
+                                        {{MessageBody}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ActionUrl}}" style="background-color: #0056b3; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                                            Ir a mi cuenta
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding: 20px; background-color: #f9f9f9; color: #999999; font-size: 12px;">
+                            &copy; {{Year}} - My Mobi. Todos los derechos reservados.<br>
+                            Santiago, Chile.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

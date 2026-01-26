@@ -10,5 +10,9 @@ namespace API_VehiclesAPP.Services.Interfaces
         Task<LoginResponseDTO> CompleteDataUser(Guid UId, ClientDTO client);
 
         Task<LoginResponseDTO?> Login(LoginRequestDTO loginRequest);
+
+        Task<AuthStatusDTO> CheckStatus(Guid userId);
+
+
     }
 }

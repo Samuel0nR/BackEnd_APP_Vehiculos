@@ -1,4 +1,5 @@
-﻿using API_VehiclesAPP.Data;
+﻿using System.Security.Claims;
+using API_VehiclesAPP.Data;
 using API_VehiclesAPP.DTOs;
 using API_VehiclesAPP.DTOs.Auth;
 using API_VehiclesAPP.Entities;
@@ -55,7 +56,6 @@ namespace API_VehiclesAPP.Services
                     IsAuth = false,
                     Token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role, "false"),
                 };
-
 
             }
             catch (Exception ex)
@@ -169,6 +169,27 @@ namespace API_VehiclesAPP.Services
                 _logger.LogError($"Error al Iniciar Sesion {loginRequest} | {ex.Message}");
                 throw;
             }
+        }
+
+
+        public async Task<AuthStatusDTO> CheckStatus(Guid userId)
+        {
+            //Buscar Usuario
+            var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.UserId == userId); 
+
+            //Validar si Existe en tabla Clientes (Datos del Usuario)
+            var userComplete = await _dBContext.Clientes.FirstOrDefaultAsync(c => c.UserId == userId);
+
+            return user == null ? 
+                throw new UnauthorizedAccessException()
+                : 
+                new AuthStatusDTO
+                {
+                    IsAuth = true,
+                    Email = user.Email,
+                    Role = user.Role,
+                    ProfileCompleted = userComplete != null,
+                };
         }
 
 

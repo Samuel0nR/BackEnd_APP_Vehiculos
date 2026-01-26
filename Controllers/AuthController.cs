@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
+
 using API_VehiclesAPP.DTOs;
 using API_VehiclesAPP.DTOs.Auth;
-using API_VehiclesAPP.Entities;
 using API_VehiclesAPP.Services.Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,6 +49,21 @@ namespace API_VehiclesAPP.Controllers
                 return BadRequest();            
 
             var result = await _authService.Login(loginRequestDTO);
+
+            return Ok(result);
+        }
+
+
+        [Authorize]
+        [HttpGet("check-status")]
+        public async Task<IActionResult> CheckStatus()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+                return Unauthorized();
+
+            var result = await _authService.CheckStatus(userId);
 
             return Ok(result);
         }
