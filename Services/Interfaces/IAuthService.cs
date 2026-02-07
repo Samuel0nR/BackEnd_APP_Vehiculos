@@ -7,7 +7,7 @@ namespace API_VehiclesAPP.Services.Interfaces
     public interface IAuthService
     {
         Task<LoginResponseDTO> Register(RegisterRequestDTO registerRequest);
-        Task<LoginResponseDTO> CompleteDataUser(Guid UId, ClientDTO client);
+        Task<LoginResponseDTO> CompleteDataUser(Guid userId, ClientDTO client);
 
         Task<LoginResponseDTO?> Login(LoginRequestDTO loginRequest);
 

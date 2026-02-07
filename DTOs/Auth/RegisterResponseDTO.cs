@@ -7,6 +7,6 @@ namespace API_VehiclesAPP.DTOs.Auth
         public string Email { get; set; } = null!;
         public Guid UserId { get; set; }
 
-        public Cliente? Cliente { get; set; }
+        public Client? Cliente { get; set; }
     }
 }

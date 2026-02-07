@@ -1,12 +1,11 @@
-﻿using api_dotNet_vehicles.Models;
-using API_VehiclesAPP.Data;
+﻿using API_VehiclesAPP.Data;
 using API_VehiclesAPP.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API_VehiclesAPP.Services
 {
-    public class VehiclesService : IVehiclesService
+    public class VehiclesService(DBContext dBContext) : IVehiclesService
     {
+        private DBContext _dbContext = dBContext;
 
         //public async Task<IEnumerable<TipoVModel>> GetTypes(int Categoria)
         //{

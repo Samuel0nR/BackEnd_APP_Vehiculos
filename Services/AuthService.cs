@@ -1,11 +1,8 @@
-﻿using System.Security.Claims;
-using API_VehiclesAPP.Data;
+﻿using API_VehiclesAPP.Data;
 using API_VehiclesAPP.DTOs;
 using API_VehiclesAPP.DTOs.Auth;
 using API_VehiclesAPP.Entities;
 using API_VehiclesAPP.Services.Interfaces;
-
-using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_VehiclesAPP.Services
@@ -45,6 +42,8 @@ namespace API_VehiclesAPP.Services
                     Role = "User",
                     IsActive = true, // Dsps Agregar Validador mediante Correo
                     CreatedAt = DateTime.UtcNow,
+                    Username = null,
+                    Clients = new(),
                 };
 
                 _dBContext.Users.Add(user);
@@ -52,7 +51,11 @@ namespace API_VehiclesAPP.Services
 
                 loginResponseDTO = new()
                 {
-                    User = user,
+                    User = new()
+                    {
+                        Email = registerRequest.Email,
+                        UserId = user.UserId,
+                    },
                     IsAuth = false,
                     Token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role, "false"),
                 };
@@ -71,19 +74,14 @@ namespace API_VehiclesAPP.Services
             try
             {
                 var user = await _dBContext.Users
-                    .FirstOrDefaultAsync(u => u.UserId == userId);
+                    .FirstOrDefaultAsync(u => u.UserId == userId) ?? throw new Exception("Usuario no encontrado.");
 
-                if (user == null)
-                    throw new Exception("Usuario no encontrado.");
+                var clientExist = await _dBContext.Clients
+                    .FirstOrDefaultAsync(c => c.UserId == userId) ?? throw new Exception("El usuario ya completó sus datos.");
 
-                bool clientExist = await _dBContext.Clientes
-                    .AnyAsync(c => c.UserId == userId);
-
-                if (clientExist)
-                    throw new Exception("El usuario ya completó sus datos.");
 
                 client.Rut = client.Rut.Replace(".", "").ToUpper();
-                var newClient = new Cliente
+                var newClient = new Client
                 {
                     ClienteId = Guid.NewGuid(),
                     UserId = userId,
@@ -93,12 +91,16 @@ namespace API_VehiclesAPP.Services
                     Direccion = client.Direccion
                 };
 
-                _dBContext.Clientes.Add(newClient);
+                _dBContext.Clients.Add(newClient);
                 await _dBContext.SaveChangesAsync();
 
                 return new LoginResponseDTO
                 {
-                    User = user,
+                    User = new()
+                    {
+                        UserId = userId,
+                        Email = client.Email,
+                    },
                     Token = _jwtService.GenerateToken(
                         userId.ToString(),
                         user.Email,
@@ -120,12 +122,12 @@ namespace API_VehiclesAPP.Services
         {
             LoginResponseDTO? loginResponse = new()
             {
-                User = new()
+                User = new() { Email = string.Empty, UserId = Guid.Empty}
             };
 
             try
             {
-                // Validar que Reuqest no venga Null
+                // Validar que Request no venga Null
                 if (loginRequest == null)
                     return loginResponse;
 
@@ -137,28 +139,35 @@ namespace API_VehiclesAPP.Services
                 // Validar Contraseña Ingresada
                 bool isValid = BCrypt.Net.BCrypt.Verify(loginRequest.Password, user!.PasswordHash);
 
+                // Validar Info Cliente
+                var hasProfile = await _dBContext.Clients
+                    .AnyAsync(c => c.UserId == user.UserId);
+
 
                 return isValid ?
                 loginResponse = new LoginResponseDTO()
                 {
-                    User = new User()
+                    User = new ClientDTO()
                     {
+                        Nombre = $"{user.Clients?.Nombre ?? "[Nombre]"} {user.Clients?.Apellido ?? "[Apellido]"}",
                         Email = user.Email,
-                        Username = user.Username,
+                        Username = user.Username ?? "",
                         Role = user.Role,
                         UserId = user.UserId,
                     },
                     Token = _jwtService.GenerateToken(user.UserId.ToString(), user.Email, user.Role, "true"),
                     IsAuth = isValid,
+                    ProfileComplete = hasProfile,
                     Code = "200",
                     Message = "OK",
                 } 
                 : 
                 loginResponse = new LoginResponseDTO()
                 {
-                    User = new User(),
+                    User = new() { Email = string.Empty, UserId = Guid.Empty },
                     Token = null,
                     IsAuth = false,
+                    ProfileComplete = false,
                     Code = "400",
                     Message = "Contraseña Incorrecta.",
                 };
@@ -178,7 +187,7 @@ namespace API_VehiclesAPP.Services
             var user = await _dBContext.Users.FirstOrDefaultAsync(u => u.UserId == userId); 
 
             //Validar si Existe en tabla Clientes (Datos del Usuario)
-            var userComplete = await _dBContext.Clientes.FirstOrDefaultAsync(c => c.UserId == userId);
+            var userComplete = await _dBContext.Clients.FirstOrDefaultAsync(c => c.UserId == userId);
 
             return user == null ? 
                 throw new UnauthorizedAccessException()

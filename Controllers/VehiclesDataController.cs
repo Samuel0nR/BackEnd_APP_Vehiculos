@@ -1,9 +1,5 @@
-﻿using api_dotNet_vehicles.Models;
-using API_VehiclesAPP.Data;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace api_dotNet_vehicles.Controllers
 {
@@ -12,12 +8,6 @@ namespace api_dotNet_vehicles.Controllers
     [EnableCors("AllowAngularApp")]
     public class VehiclesDataController : ControllerBase
     {
-        private readonly DBContext _dbContext;
-
-        public VehiclesDataController(DBContext DbContext)
-        {
-            _dbContext = DbContext;
-        }
 
         /*------ Data Vehiculos ------*/
         //[HttpGet("Brand")]
