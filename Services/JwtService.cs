@@ -9,21 +9,24 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace API_VehiclesAPP.Services
 {
-    public class JwtService : IJwtService
+    public class JwtService(IOptions<JwtConfig> options, ILogger<JwtService> logger) : IJwtService
     {
-        private readonly JwtConfig _options;
-        public JwtService(IOptions<JwtConfig> options) => _options = options.Value;
+        private readonly JwtConfig _options = options.Value;
+        private readonly ILogger<JwtService> _logger = logger;
 
-        public string GenerateToken(string ID, string Email = "", string Role = "User")
+
+        public string GenerateToken(string ID, string Email = "", string Role = "User", string Auth = "false")
         {
-            JwtSecurityToken token = new();
+            JwtSecurityToken token;
+            
             try
             {
                 Claim[] claims =
                 [
-                    new Claim(ClaimTypes.NameIdentifier, ID), //
+                    new Claim(ClaimTypes.NameIdentifier, ID),
                     new Claim(ClaimTypes.Email, Email),
                     new Claim(ClaimTypes.Role, Role),
+                    new Claim("Auth", Auth),
                 ];
 
                 SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_options.Key));
@@ -40,7 +43,7 @@ namespace API_VehiclesAPP.Services
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Error al Generar JWT | {ex.Message}.");
                 throw;
             }
 
