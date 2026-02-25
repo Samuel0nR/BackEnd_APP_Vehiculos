@@ -17,7 +17,8 @@ namespace API_VehiclesAPP.Services
 
         public string GenerateToken(string ID, string Email = "", string Role = "User", string Auth = "false")
         {
-            JwtSecurityToken token = null!;
+            JwtSecurityToken token;
+            
             try
             {
                 Claim[] claims =

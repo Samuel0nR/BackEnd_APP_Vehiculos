@@ -28,7 +28,7 @@ namespace API_VehiclesAPP.Controllers
 
         [Authorize]
         [HttpPost("register/complete")]
-        public async Task<IActionResult> CompleteRegister([FromBody]ClientDTO client)
+        public async Task<IActionResult> CompleteRegister(ClientDTO client)
         {
             if(string.IsNullOrEmpty(client.Nombre) || string.IsNullOrEmpty(client.Rut))
                 return BadRequest();
@@ -36,8 +36,9 @@ namespace API_VehiclesAPP.Controllers
             Guid userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             
             var resp = await _authService.CompleteDataUser( userId, client );
+            if (resp == null) return BadRequest();
 
-            return Ok(resp);
+            return Ok();
         }
         
 
@@ -49,6 +50,8 @@ namespace API_VehiclesAPP.Controllers
                 return BadRequest();            
 
             var result = await _authService.Login(loginRequestDTO);
+            if (result == null) return BadRequest();
+
 
             return Ok(result);
         }
